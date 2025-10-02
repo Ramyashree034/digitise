@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Digitise 2025 - Dark Neon Tech Festival Design System */
+
+@layer base {
+  :root {
+    /* Dark Tech Base Colors */
+    --background: 220 25% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 25% 8%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 25% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Neon Electric Colors */
+    --primary: 180 100% 50%;
+    --primary-foreground: 220 25% 6%;
+
+    --secondary: 260 100% 60%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 120 100% 50%;
+    --accent-foreground: 220 25% 6%;
+
+    --neon-cyan: 180 100% 50%;
+    --neon-purple: 260 100% 60%;
+    --neon-green: 120 100% 50%;
+    --neon-pink: 320 100% 60%;
+    --neon-blue: 220 100% 60%;
+
+    --muted: 220 15% 15%;
+    --muted-foreground: 215 20% 65%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 25% 15%;
+    --input: 220 25% 12%;
+    --ring: 180 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Tech Gradients */
+    --gradient-neon: linear-gradient(135deg, hsl(var(--neon-cyan)), hsl(var(--neon-purple)));
+    --gradient-tech: linear-gradient(135deg, hsl(var(--background)), hsl(220 25% 10%));
+    --gradient-glow: linear-gradient(135deg, hsl(var(--neon-cyan) / 0.3), hsl(var(--neon-purple) / 0.3));
+
+    /* Shadows & Glows */
+    --shadow-neon: 0 0 20px hsl(var(--neon-cyan) / 0.5);
+    --shadow-purple: 0 0 20px hsl(var(--neon-purple) / 0.5);
+    --shadow-green: 0 0 20px hsl(var(--neon-green) / 0.5);
+    --glow-text: 0 0 10px currentColor;
+
+    /* Animations */
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: all 0.3s ease-in-out;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 180 100% 50%;
+    --primary-foreground: 220 25% 6%;
+
+    --secondary: 260 100% 60%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 15% 15%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 120 100% 50%;
+    --accent-foreground: 220 25% 6%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 25% 15%;
+    --input: 220 25% 12%;
+    --ring: 180 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-rajdhani;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--neon-cyan));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--neon-purple));
+  }
+}
+
+@layer components {
+  /* Typography */
+  .title-neon {
+    @apply font-orbitron font-black text-transparent bg-clip-text;
+    background-image: var(--gradient-neon);
+    text-shadow: var(--glow-text);
+  }
+
+  .text-glow {
+    text-shadow: var(--glow-text);
+  }
+
+  /* Neon Button Variants */
+  .btn-neon {
+    @apply relative px-8 py-4 font-rajdhani font-bold text-lg;
+    @apply bg-transparent border-2 border-primary text-primary;
+    @apply transition-all duration-300 overflow-hidden;
+    @apply hover:text-primary-foreground hover:shadow-lg;
+    background: linear-gradient(45deg, transparent 30%, hsl(var(--primary) / 0.1) 50%, transparent 70%);
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+
+  .btn-neon:hover {
+    background-color: hsl(var(--primary));
+    box-shadow: var(--shadow-neon);
+    transform: translateY(-2px);
+  }
+
+  .btn-neon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.4), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-neon:hover::before {
+    left: 100%;
+  }
+
+  /* Neon Cards */
+  .card-neon {
+    @apply bg-card border border-primary/30 rounded-lg;
+    @apply backdrop-blur-sm relative overflow-hidden;
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.2);
+    transition: var(--transition-glow);
+  }
+
+  .card-neon:hover {
+    border-color: hsl(var(--primary));
+    box-shadow: var(--shadow-neon);
+    transform: translateY(-5px);
+  }
+
+  .card-neon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-neon);
+  }
+
+  /* Glowing Section Dividers */
+  .section-divider {
+    @apply w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent;
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.5);
+  }
+
+  /* Particle Background */
+  .particle-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(1px 1px at 20px 30px, hsl(var(--neon-cyan)), transparent),
+      radial-gradient(1px 1px at 40px 70px, hsl(var(--neon-purple)), transparent),
+      radial-gradient(1px 1px at 90px 40px, hsl(var(--neon-green)), transparent),
+      radial-gradient(1px 1px at 130px 80px, hsl(var(--neon-pink)), transparent);
+    background-repeat: repeat;
+    background-size: 150px 100px;
+    animation: particles 20s linear infinite;
+    opacity: 0.3;
+  }
+
+  /* Animation Keyframes */
+  @keyframes particles {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-150px, -100px); }
+  }
+
+  @keyframes neon-pulse {
+    0%, 100% { 
+      text-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+    }
+    50% { 
+      text-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  .animate-neon-pulse {
+    animation: neon-pulse 2s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Smooth Scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+}
