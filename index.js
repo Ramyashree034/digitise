@@ -1,3 +1,4 @@
+// index.js
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -10,19 +11,13 @@ import fs from "fs";
 
 dotenv.config();
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// Paths for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve uploaded files
+const app = express();
+app.use(cors());
+app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Serve React frontend
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
 
 // MongoDB connection
 mongoose
@@ -61,7 +56,7 @@ const Registration = mongoose.model("Registration", registrationSchema);
 // SendGrid setup
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// API route
+// Registration API
 app.post("/register", upload.single("paymentScreenshot"), async (req, res) => {
   try {
     if (!req.file) {
@@ -132,8 +127,10 @@ app.post("/register", upload.single("paymentScreenshot"), async (req, res) => {
   }
 });
 
-// Root route to serve React
-app.get("*", (req, res) => {
+// Serve React frontend
+app.use(express.static(path.join(__dirname, "frontend", "dist")));
+
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
