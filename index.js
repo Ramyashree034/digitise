@@ -1,16 +1,17 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const multer = require("multer");
-const path = require("path");
-const sgMail = require("@sendgrid/mail");
+// index.js (ES Module)
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+import multer from "multer";
+import path from "path";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // MongoDB connection
 mongoose
@@ -27,7 +28,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Registration Schema
-const registrationSchema = new mongoose.Schema({
+import { Schema, model } from "mongoose";
+const registrationSchema = new Schema({
   teamLeader: {
     name: String,
     email: String,
@@ -44,31 +46,25 @@ const registrationSchema = new mongoose.Schema({
   paymentFile: String,
   createdAt: { type: Date, default: Date.now },
 });
-const Registration = mongoose.model("Registration", registrationSchema);
+const Registration = model("Registration", registrationSchema);
 
-// SendGrid setup
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Nodemailer setup
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 
 // Registration API
 app.post("/register", upload.single("paymentScreenshot"), async (req, res) => {
   try {
-    if (!req.file) {
-      return res
-        .status(400)
-        .json({ message: "Payment screenshot is required!" });
-    }
+    if (!req.file)
+      return res.status(400).json({ message: "Payment screenshot is required!" });
 
-    const {
-      name,
-      email,
-      phone,
-      college,
-      year,
-      experience,
-      usn,
-      event,
-      participants,
-    } = req.body;
+    const { name, email, phone, college, year, experience, usn, event, participants } =
+      req.body;
 
     const registration = new Registration({
       teamLeader: { name, email, phone, college, year, experience, usn },
@@ -82,9 +78,9 @@ app.post("/register", upload.single("paymentScreenshot"), async (req, res) => {
     await registration.save();
 
     // Email to participant
-    await sgMail.send({
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
       to: email,
-      from: process.env.NOTIFY_EMAIL, // must be a verified sender in SendGrid
       subject: `✅ Registration Confirmed - ${event}`,
       html: `<h2>Thank you for registering, ${name}!</h2>
              <p>Your registration for <strong>${event}</strong> is confirmed.</p>
@@ -92,9 +88,9 @@ app.post("/register", upload.single("paymentScreenshot"), async (req, res) => {
     });
 
     // Email to organizer
-    await sgMail.send({
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
       to: process.env.NOTIFY_EMAIL,
-      from: process.env.NOTIFY_EMAIL,
       subject: `📥 New Registration - ${event}`,
       html: `<h2>New Registration Alert</h2>
              <p><strong>Leader:</strong> ${name}</p>
@@ -105,10 +101,8 @@ app.post("/register", upload.single("paymentScreenshot"), async (req, res) => {
              <p><strong>Team Size:</strong> ${registration.teamSize}</p>`,
       attachments: [
         {
-          content: Buffer.from(require("fs").readFileSync(req.file.path)).toString("base64"),
           filename: req.file.originalname,
-          type: "image/png", // adjust based on file type
-          disposition: "attachment",
+          path: req.file.path,
         },
       ],
     });
